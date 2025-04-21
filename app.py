@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 CORS(app)
+
 # MongoDB Atlas URI desde variable de entorno
 MONGO_URI = os.environ.get("MONGO_URI")
 client = MongoClient(MONGO_URI)
@@ -18,6 +19,11 @@ collection = db["Datos"]
 @app.route("/api/data", methods=["POST"])
 def recibir_dato():
     data = request.get_json()
+    print("Payload recibido:", data)
+
+    if not data:
+        return jsonify({"error": "JSON inválido o no recibido"}), 400
+
     required_keys = ["dispositivo", "temperatura", "humedad"]
     if not all(k in data for k in required_keys):
         return jsonify({"error": "Faltan campos en el JSON"}), 400
@@ -29,8 +35,14 @@ def recibir_dato():
         "timestamp": datetime.utcnow() - timedelta(hours=6)
     }
 
-    collection.insert_one(documento)
+    try:
+        collection.insert_one(documento)
+    except Exception as e:
+        print("Error al insertar en MongoDB:", e)
+        return jsonify({"error": "Error al guardar en la base de datos"}), 500
+
     return jsonify({"message": "Datos guardados correctamente"}), 200
+
 
 # Ruta para ver los últimos 50 datos
 @app.route("/api/datos", methods=["GET"])
