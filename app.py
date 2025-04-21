@@ -4,6 +4,7 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from datetime import datetime
 from pytz import timezone
+from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 CORS(app)
@@ -26,7 +27,7 @@ def recibir_dato():
         "dispositivo": data["dispositivo"],
         "temperatura": data["temperatura"],
         "humedad": data["humedad"],
-        "timestamp": datetime.now(timezone("America/Mexico_City"))
+        "timestamp": datetime.now(ZoneInfo("America/Mexico_City"))
     }
 
     collection.insert_one(documento)
