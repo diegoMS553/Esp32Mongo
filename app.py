@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from datetime import datetime
+from pytz import timezone
 
 app = Flask(__name__)
 CORS(app)
@@ -25,7 +26,7 @@ def recibir_dato():
         "dispositivo": data["dispositivo"],
         "temperatura": data["temperatura"],
         "humedad": data["humedad"],
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(timezone("America/Mexico_City"))
     }
 
     collection.insert_one(documento)
