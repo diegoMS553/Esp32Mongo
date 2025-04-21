@@ -17,7 +17,6 @@ collection = db["Datos"]
 
 # Ruta para recibir datos del ESP32
 @app.route("/api/data", methods=["POST"])
-@app.route("/api/data", methods=["POST"])
 def recibir_dato():
     try:
         data = request.get_json()
