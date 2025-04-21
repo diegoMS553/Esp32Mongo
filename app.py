@@ -17,31 +17,27 @@ collection = db["Datos"]
 
 # Ruta para recibir datos del ESP32
 @app.route("/api/data", methods=["POST"])
+@app.route("/api/data", methods=["POST"])
 def recibir_dato():
-    data = request.get_json()
-    print("Payload recibido:", data)
-
-    if not data:
-        return jsonify({"error": "JSON inválido o no recibido"}), 400
-
-    required_keys = ["dispositivo", "temperatura", "humedad"]
-    if not all(k in data for k in required_keys):
-        return jsonify({"error": "Faltan campos en el JSON"}), 400
-
-    documento = {
-        "dispositivo": data["dispositivo"],
-        "temperatura": data["temperatura"],
-        "humedad": data["humedad"],
-        "timestamp": datetime.utcnow() - timedelta(hours=6)
-    }
-
     try:
-        collection.insert_one(documento)
-    except Exception as e:
-        print("Error al insertar en MongoDB:", e)
-        return jsonify({"error": "Error al guardar en la base de datos"}), 500
+        data = request.get_json()
+        required_keys = ["dispositivo", "temperatura", "humedad"]
+        if not all(k in data for k in required_keys):
+            return jsonify({"error": "Faltan campos en el JSON"}), 400
 
-    return jsonify({"message": "Datos guardados correctamente"}), 200
+        documento = {
+            "dispositivo": data["dispositivo"],
+            "temperatura": data["temperatura"],
+            "humedad": data["humedad"],
+            "timestamp": datetime.utcnow() - timedelta(hours=6)
+        }
+
+        collection.insert_one(documento)
+        return jsonify({"message": "Datos guardados correctamente"}), 200
+
+    except Exception as e:
+        print("Error al guardar en MongoDB:", str(e))  # <-- Esto aparecerá en los logs de Render
+        return jsonify({"error": "Error al guardar en la base de datos"}), 500
 
 
 # Ruta para ver los últimos 50 datos
