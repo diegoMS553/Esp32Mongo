@@ -8,7 +8,6 @@ from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 CORS(app)
-
 # MongoDB Atlas URI desde variable de entorno
 MONGO_URI = os.environ.get("MONGO_URI")
 client = MongoClient(MONGO_URI)
