@@ -1,13 +1,13 @@
 services:
-- type: web
-  name: pryMongoEsp32
-  runtime: python
-  repo: https://github.com/diegoMS553/Esp32Mongo
-  plan: free
-  envVars:
-  - key: MONGO_URI
-    value: mongodb+srv://diegosant:<diegosant123>@cluster0.7zhck.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-  region: oregon
-  buildCommand: pip install -r requirements.txt
-  startCommand: python app.py
+  - type: web
+    name: pryMongoEsp32
+    runtime: python
+    repo: https://github.com/diegoMS553/Esp32Mongo
+    plan: free
+    envVars:
+      - key: MONGO_URI
+        value: mongodb+srv://diegosant:diegosant123@cluster0.7zhck.mongodb.net/BasePryEsp32?retryWrites=true&w=majority
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
 version: "1"
