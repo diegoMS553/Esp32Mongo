@@ -40,7 +40,7 @@ def recibir_dato():
             "humedad": float(data["humedad"]),
             "luz": int(data["luz"]),
             "movimiento": int(data["movimiento"]),
-            "timestamp": datetime.now(timezone("America/Mexico_City"))
+            "timestamp": datetime.utcnow() - timedelta(hours=6)
         }
         result = collection.insert_one(documento)
         return jsonify({"message": "Guardado", "id": str(result.inserted_id)}), 200
