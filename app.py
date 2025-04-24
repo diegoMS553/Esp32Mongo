@@ -22,6 +22,8 @@ collection = db["Datos"]
 def recibir_dato():
     try:
         data = request.get_json()
+        print("JSON recibido:", data)  # <--- NUEVO
+
         required_keys = ["dispositivo", "temperatura", "humedad", "luz", "movimiento"]
         if not all(k in data for k in required_keys):
             return jsonify({"error": "Faltan campos en el JSON"}), 400
@@ -35,12 +37,15 @@ def recibir_dato():
             "timestamp": datetime.utcnow() - timedelta(hours=6)
         }
 
+        print("Documento a guardar:", documento)  # <--- NUEVO
         collection.insert_one(documento)
+
         return jsonify({"message": "Datos guardados correctamente"}), 200
 
     except Exception as e:
-        print("Error al guardar en MongoDB:", str(e))  # <-- Esto aparecerá en los logs de Render
-        return jsonify({"error": "Error al guardar en la base de datos"}), 500
+        print("Error al guardar en MongoDB:", str(e))
+        return jsonify({"error": str(e)}), 500
+
 
 
 # Ruta para ver los últimos 50 datos
