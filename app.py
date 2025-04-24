@@ -15,12 +15,14 @@ client = MongoClient(MONGO_URI)
 db = client["BasePryEsp32"]
 collection = db["Datos"]
 
+
+
 # Ruta para recibir datos del ESP32
 @app.route("/api/data", methods=["POST"])
 def recibir_dato():
     try:
         data = request.get_json()
-        required_keys = ["dispositivo", "temperatura", "humedad"]
+        required_keys = ["dispositivo", "temperatura", "humedad", "luz", "movimiento"]
         if not all(k in data for k in required_keys):
             return jsonify({"error": "Faltan campos en el JSON"}), 400
 
@@ -28,6 +30,8 @@ def recibir_dato():
             "dispositivo": data["dispositivo"],
             "temperatura": data["temperatura"],
             "humedad": data["humedad"],
+            "luz": data["luz"],
+            "movimiento": data["movimiento"],
             "timestamp": datetime.utcnow() - timedelta(hours=6)
         }
 
