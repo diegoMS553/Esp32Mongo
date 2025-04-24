@@ -22,28 +22,30 @@ collection = db["Datos"]
 def recibir_dato():
     try:
         data = request.get_json()
-        print("JSON recibido:", data)  # <--- NUEVO
+        print("JSON recibido:", data)
 
         required_keys = ["dispositivo", "temperatura", "humedad", "luz", "movimiento"]
         if not all(k in data for k in required_keys):
-            return jsonify({"error": "Faltan campos en el JSON"}), 400
+            return jsonify({"error": "Faltan campos"}), 400
+
+        if not (isinstance(data["temperatura"], (int, float)) and
+                isinstance(data["humedad"], (int, float)) and
+                isinstance(data["luz"], int) and
+                isinstance(data["movimiento"], int)):
+            return jsonify({"error": "Tipos inválidos"}), 400
 
         documento = {
             "dispositivo": data["dispositivo"],
-            "temperatura": data["temperatura"],
-            "humedad": data["humedad"],
-            "luz": data["luz"],
-            "movimiento": data["movimiento"],
-            "timestamp": datetime.utcnow() - timedelta(hours=6)
+            "temperatura": float(data["temperatura"]),
+            "humedad": float(data["humedad"]),
+            "luz": int(data["luz"]),
+            "movimiento": int(data["movimiento"]),
+            "timestamp": datetime.now(timezone("America/Mexico_City"))
         }
-
-        print("Documento a guardar:", documento)  # <--- NUEVO
-        collection.insert_one(documento)
-
-        return jsonify({"message": "Datos guardados correctamente"}), 200
-
+        result = collection.insert_one(documento)
+        return jsonify({"message": "Guardado", "id": str(result.inserted_id)}), 200
     except Exception as e:
-        print("Error al guardar en MongoDB:", str(e))
+        print("Error MongoDB:", str(e))
         return jsonify({"error": str(e)}), 500
 
 
