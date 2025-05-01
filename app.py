@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 from pytz import timezone
 from zoneinfo import ZoneInfo
+from flask import render_template
 
 app = Flask(__name__)
 CORS(app)
@@ -59,6 +60,12 @@ def ver_datos():
         d["timestamp"] = d["timestamp"].isoformat()
 
     return jsonify(datos), 200
+
+
+@app.route("/ver-datos")
+def ver_pagina_datos():
+    return render_template("index.html")
+
 
 @app.route("/", methods=["GET"])
 def index():
