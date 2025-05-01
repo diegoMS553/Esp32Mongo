@@ -66,6 +66,34 @@ def ver_datos():
 def ver_pagina_datos():
     return render_template("index.html")
 
+@app.route("/api/estadisticas", methods=["GET"])
+def estadisticas():
+    try:
+        pipeline = [
+            {
+                "$group": {
+                    "_id": None,
+                    "temp_prom": {"$avg": "$temperatura"},
+                    "temp_min": {"$min": "$temperatura"},
+                    "temp_max": {"$max": "$temperatura"},
+                    "hum_prom": {"$avg": "$humedad"},
+                    "hum_min": {"$min": "$humedad"},
+                    "hum_max": {"$max": "$humedad"},
+                    "luz_prom": {"$avg": "$luz"},
+                    "mov_total": {"$sum": "$movimiento"},
+                    "total_registros": {"$sum": 1}
+                }
+            }
+        ]
+        result = list(collection.aggregate(pipeline))
+        return jsonify(result[0] if result else {}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/ver-estadisticas")
+def ver_estadisticas():
+    return render_template("estadisticas.html")
+
 
 @app.route("/", methods=["GET"])
 def index():

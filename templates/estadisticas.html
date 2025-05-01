@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas de Datos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+        h1 {
+            margin-bottom: 1rem;
+        }
+        .stat {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Estadísticas Generales</h1>
+    <div id="estadisticas">
+        <p class="stat">Cargando estadísticas...</p>
+    </div>
+
+    <script>
+        fetch('/api/estadisticas')
+            .then(response => response.json())
+            .then(data => {
+                const div = document.getElementById("estadisticas");
+                if (data && Object.keys(data).length > 0) {
+                    div.innerHTML = `
+                        <p class="stat"><strong>Temperatura:</strong> Promedio = ${data.temp_prom.toFixed(2)}°C, Mínima = ${data.temp_min}°C, Máxima = ${data.temp_max}°C</p>
+                        <p class="stat"><strong>Humedad:</strong> Promedio = ${data.hum_prom.toFixed(2)}%, Mínima = ${data.hum_min}%, Máxima = ${data.hum_max}%</p>
+                        <p class="stat"><strong>Luz:</strong> Promedio = ${data.luz_prom.toFixed(2)}</p>
+                        <p class="stat"><strong>Movimientos Detectados:</strong> ${data.mov_total}</p>
+                        <p class="stat"><strong>Total de Registros:</strong> ${data.total_registros}</p>
+                    `;
+                } else {
+                    div.innerHTML = `<p class="stat">No hay datos disponibles.</p>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById("estadisticas").innerHTML = `<p class="stat">Error al cargar estadísticas.</p>`;
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
